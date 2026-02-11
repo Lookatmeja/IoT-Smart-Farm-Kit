@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ข้อเสนอ โครงการ: Smart Fertigation Kit Pro 15K</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+            scroll-behavior: smooth;
+        }
+        
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            margin: 0 auto;
+            height: 350px;
+        }
+        /* Mobile Frame Styling */
+        
+        .mobile-wrapper {
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .phone-container {
+            width: 320px;
+            height: 640px;
+            background: #fff;
+            border-radius: 40px;
+            border: 10px solid #222;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .phone-container::-webkit-scrollbar {
+            width: 0px;
+        }
+        /* App Inner Styles */
+        
+        .top-nav-app {
+            background: #4caf50;
+            padding: 35px 15px 15px;
+            color: white;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 0 0 20px 20px;
+        }
+        
+        .stat-card-app {
+            background: #fff;
+            padding: 10px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            border: 1px solid #f0f0f0;
+        }
+        
+        .stat-card-app i {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            color: #4caf50;
+        }
+        
+        .ctrl-btn-app {
+            border: none;
+            padding: 12px;
+            border-radius: 15px;
+            background: #f8f9fa;
+            color: #7f8c8d;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            transition: 0.3s;
+            border: 1px solid transparent;
+            font-size: 0.75rem;
+        }
+        
+        .ctrl-btn-app.active-blue {
+            background: #e3f2fd;
+            color: #03a9f4;
+            border-color: #03a9f4;
+        }
+        
+        .ctrl-btn-app.active-green {
+            background: #e8f5e9;
+            color: #4caf50;
+            border-color: #4caf50;
+        }
+        
+        .main-pump-btn-app {
+            grid-column: span 2;
+            background: #2d3436;
+            color: white;
+            flex-direction: row;
+            justify-content: center;
+            font-size: 0.85rem;
+        }
+        
+        .main-pump-btn-app.running {
+            background: #ff5252;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 82, 82, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 82, 82, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 82, 82, 0);
+            }
+        }
+        
+        .system-node {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .system-node:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .system-node.active {
+            ring: 2px solid #10b981;
+            border-color: #10b981;
+            background-color: #f0fdf4;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .img-container {
+            width: 100%;
+            overflow: hidden;
+            border-radius: 1.5rem;
+            transition: transform 0.3s ease;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .img-container:hover {
+            transform: scale(1.02);
+        }
+        
+        .img-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: contain;
+        }
+        /* ROI Slider Custom Styling */
+        
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 8px;
+            cursor: pointer;
+            background: #e2e8f0;
+            border-radius: 4px;
+        }
+        
+        input[type=range]::-webkit-slider-thumb {
+            height: 24px;
+            width: 24px;
+            border-radius: 50%;
+            background: #10b981;
+            cursor: pointer;
+            -webkit-appearance: none;
+            margin-top: -8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800">
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-microchip text-emerald-600 text-2xl"></i>
+                    <span class="font-bold text-xl text-slate-800 tracking-tight">Smart Fertigation <span class="text-emerald-600">Pro 15K</span></span>
+                </div>
+                <div class="hidden md:flex space-x-6 text-sm">
+                    <button onclick="scrollToSection('problem')" class="text-slate-600 hover:text-emerald-600 font-medium">ปัญหา & ทางออก</button>
+                    <button onclick="scrollToSection('system')" class="text-slate-600 hover:text-emerald-600 font-medium">เจาะลึกระบบ</button>
+                    <button onclick="scrollToSection('interactive-app')" class="text-slate-600 hover:text-emerald-600 font-medium">แอปจำลอง</button>
+                    <button onclick="scrollToSection('budget-section')" class="text-slate-600 hover:text-emerald-600 font-medium">งบประมาณ</button>
+                    <button onclick="scrollToSection('roi-simulator')" class="text-slate-600 hover:text-emerald-600 font-medium text-emerald-600">วิเคราะห์กำไร</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative bg-slate-900 py-24 overflow-hidden text-center">
+        <div class="absolute inset-0 opacity-20 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1592982537447-7440770cbfc9?q=80&w=2000&auto=format&fit=crop');">
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="inline-flex items-center gap-2 bg-emerald-500/20 px-4 py-1.5 rounded-full text-sm font-semibold text-emerald-400 mb-8 border border-emerald-500/30">
+                <i class="fa-solid fa-bolt-lightning"></i> High Precision Farming
+            </div>
+            <h1 class="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
+                ยกระดับเกษตรกรรมด้วย<br>
+                <span class="text-emerald-500">Smart Fertigation Kit Pro</span>
+            </h1>
+            <p class="text-xl text-slate-300 max-w-3xl mx-auto mb-10 leading-relaxed text-center">
+                โซลูชันควบคุมน้ำและปุ๋ยอัจฉริยะ ผสานการทำงานระหว่างเซนเซอร์แม่นยำสูงและการควบคุมผ่านมือถือ<br> เพื่อผลผลิตที่มีคุณภาพและประหยัดต้นทุนอย่างยั่งยืน
+            </p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <button onclick="scrollToSection('problem')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 px-10 rounded-2xl shadow-xl shadow-emerald-900/40 transition-all transform hover:-translate-y-1">
+                    ดูรายละเอียดโครงการ
+                </button>
+                <button onclick="scrollToSection('roi-simulator')" class="bg-white/10 hover:bg-white/20 text-white font-bold py-4 px-10 rounded-2xl border border-white/30 backdrop-blur-sm transition-all">
+                    คำนวณกำไรจากการลงทุน
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Overcoming Limits Section -->
+    <section id="problem" class="py-20 bg-white border-b border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-16">
+            <h2 class="text-3xl md:text-5xl font-bold text-slate-900 mb-4 text-center w-full">ก้าวข้ามขีดจำกัดการเกษตรแบบดั้งเดิม</h2>
+            <p class="text-lg text-slate-600 max-w-3xl mx-auto text-center w-full">สรุปประเด็นปัญหาสำคัญที่เกษตรกรพบเจอ และการแก้ปัญหาอย่างยั่งยืนด้วยเทคโนโลยี Smart Kit</p>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-12 text-left">
+            <div class="bg-slate-50 p-10 rounded-[2.5rem] border border-slate-200">
+                <h3 class="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
+                    <i class="fa-solid fa-triangle-exclamation text-amber-500"></i> ปัญหาปัจจุบัน
+                </h3>
+                <ul class="space-y-6 text-slate-600">
+                    <li class="flex gap-4">
+                        <div class="bg-white p-3 rounded-xl shadow-sm h-fit text-rose-500"><i class="fa-solid fa-clock"></i></div>
+                        <div>
+                            <strong class="text-slate-900 text-lg block mb-1">เสียแรงงานและเวลา</strong>
+                            <p>ต้องเฝ้าเปิด-ปิดน้ำด้วยมือ ขาดความสะดวกในการทำกิจกรรมอื่น</p>
+                        </div>
+                    </li>
+                    <li class="flex gap-4">
+                        <div class="bg-white p-3 rounded-xl shadow-sm h-fit text-rose-500"><i class="fa-solid fa-flask"></i></div>
+                        <div>
+                            <strong class="text-slate-900 text-lg block mb-1">การให้ปุ๋ยไม่แม่นยำ</strong>
+                            <p>กะปริมาณด้วยมือส่งผลให้ต้นไม้โตไม่เท่ากันและสูญเสียปุ๋ยส่วนเกิน</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="bg-emerald-600 p-10 rounded-[2.5rem] text-white shadow-xl shadow-emerald-100">
+                <h3 class="text-2xl font-bold mb-6 flex items-center gap-3 text-white">
+                    <i class="fa-solid fa-circle-check text-emerald-300"></i> Smart Kit Pro Solution
+                </h3>
+                <ul class="space-y-6">
+                    <li class="flex gap-4">
+                        <div class="bg-white/10 p-3 rounded-xl h-fit text-emerald-300"><i class="fa-solid fa-bolt"></i></div>
+                        <div>
+                            <strong class="text-white text-lg block mb-1">ระบบอัตโนมัติเต็มรูปแบบ</strong>
+                            <p class="text-emerald-50">ประมวลผลผ่านเซนเซอร์ สั่งงานน้ำและปุ๋ยตามความต้องการจริงของพืช</p>
+                        </div>
+                    </li>
+                    <li class="flex gap-4">
+                        <div class="bg-white/10 p-3 rounded-xl h-fit text-emerald-300"><i class="fa-solid fa-shield-halved"></i></div>
+                        <div>
+                            <strong class="text-white text-lg block mb-1">ความปลอดภัยระดับอุตสาหกรรม</strong>
+                            <p class="text-emerald-50">มีระบบกันปั๊มไหม้และปุ่มฉุกเฉิน มั่นใจได้แม้ไม่ได้อยู่ดูแลในพื้นที่</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deep Dive (Modular Design) -->
+    <section id="system" class="py-20 bg-slate-50 border-y border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-16">
+            <h2 class="text-3xl md:text-5xl font-bold text-slate-900 mb-4 text-center w-full">เจาะลึกระบบการทำงาน</h2>
+            <p class="text-lg text-slate-600 max-w-3xl mx-auto text-center w-full">การทำงานประสานกันระหว่างฮาร์ดแวร์ประสิทธิภาพสูงและซอฟต์แวร์อัจฉริยะ (Modular Design)</p>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-3 gap-8 items-stretch">
+            <div class="lg:col-span-2 bg-white p-10 rounded-[3rem] shadow-sm border border-slate-200">
+                <div class="grid grid-cols-3 gap-6 text-center">
+                    <div class="flex flex-col gap-4">
+                        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 text-center w-full">Inputs / Sensors</div>
+                        <div onclick="showDetail('soil')" class="system-node bg-amber-50 border border-amber-200 p-5 rounded-2xl text-center">
+                            <i class="fa-solid fa-droplet text-amber-500 text-3xl mb-3 text-center w-full"></i>
+                            <div class="font-bold text-slate-700 text-sm text-center">Soil Sensor</div>
+                        </div>
+                        <div onclick="showDetail('ec')" class="system-node bg-blue-50 border border-blue-200 p-5 rounded-2xl text-center">
+                            <i class="fa-solid fa-bolt text-blue-500 text-3xl mb-3 text-center w-full"></i>
+                            <div class="font-bold text-slate-700 text-sm text-center">EC Sensor</div>
+                        </div>
+                        <div onclick="showDetail('level')" class="system-node bg-rose-50 border border-rose-200 p-5 rounded-2xl text-center">
+                            <i class="fa-solid fa-water text-rose-500 text-3xl mb-3 text-center w-full"></i>
+                            <div class="font-bold text-slate-700 text-sm text-center">Float Switch</div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col justify-center items-center text-center">
+                        <div onclick="showDetail('brain')" class="system-node bg-slate-800 text-white p-8 rounded-3xl shadow-2xl border-4 border-white transform scale-110 z-10 text-center">
+                            <i class="fa-solid fa-microchip text-4xl mb-3 text-emerald-400 text-center w-full"></i>
+                            <div class="font-bold text-lg text-center">ESP32 Core</div>
+                        </div>
+                        <div class="h-10 w-px bg-slate-300 my-4 text-center"></div>
+                        <div onclick="showDetail('connect')" class="system-node bg-white border border-slate-200 p-3 rounded-xl text-[10px] font-bold text-slate-500 uppercase text-center">Aviation Plugs</div>
+                    </div>
+                    <div class="flex flex-col gap-4 text-center">
+                        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 text-center w-full">Outputs / Action</div>
+                        <div onclick="showDetail('pump')" class="system-node bg-emerald-50 border border-emerald-200 p-5 rounded-2xl text-center">
+                            <i class="fa-solid fa-fan text-emerald-600 text-3xl mb-3 text-center w-full"></i>
+                            <div class="font-bold text-slate-700 text-sm text-center">Main Pump</div>
+                        </div>
+                        <div onclick="showDetail('valve')" class="system-node bg-teal-50 border border-teal-200 p-5 rounded-2xl text-center">
+                            <i class="fa-solid fa-faucet text-teal-600 text-3xl mb-3 text-center w-full"></i>
+                            <div class="font-bold text-slate-700 text-sm text-center">3 Zones</div>
+                        </div>
+                        <div onclick="showDetail('dosing')" class="system-node bg-purple-50 border border-purple-200 p-5 rounded-2xl text-center">
+                            <i class="fa-solid fa-flask-vial text-purple-600 text-3xl mb-3 text-center w-full"></i>
+                            <div class="font-bold text-slate-700 text-sm text-center">Fert Dosing</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-slate-900 text-white p-10 rounded-[3rem] shadow-xl flex flex-col justify-center relative overflow-hidden text-center">
+                <div id="detail-content" class="fade-in relative z-10 text-center">
+                    <i class="fa-solid fa-hand-pointer text-5xl mb-8 text-emerald-400 text-center w-full"></i>
+                    <h3 class="text-2xl font-bold mb-4 text-center">ข้อมูลเชิงลึก</h3>
+                    <p class="text-slate-400 text-lg leading-relaxed text-center">คลิกที่ส่วนประกอบต่างๆ ในแผนผังทางซ้าย เพื่อดูรายละเอียดทางเทคนิค ฟังก์ชันการทำงาน และสเปคอุปกรณ์</p>
+                </div>
+                <div class="absolute -bottom-20 -right-20 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl text-center"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Mobile App Demo -->
+    <section id="interactive-app" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-16 items-center">
+            <div class="mobile-wrapper">
+                <div class="phone-container">
+                    <div class="top-nav-app">SMART FARM CONTROL PRO</div>
+
+                    <div class="p-4" style="background: #fff9c4; color: #f57f17; font-size: 0.7rem; display: flex; align-items: center; gap: 5px;">
+                        <i class="fas fa-check-circle"></i> ระบบทำงานปกติ: เชื่อมต่อ WiFi แล้ว
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 p-4">
+                        <div class="stat-card-app text-center">
+                            <i class="fas fa-leaf"></i>
+                            <div style="font-size: 0.6rem; color: #888;">ความชื้นดิน</div>
+                            <div style="font-weight: bold;">58%</div>
+                        </div>
+                        <div class="stat-card-app text-center">
+                            <i class="fas fa-flask"></i>
+                            <div style="font-size: 0.6rem; color: #888;">ค่าปุ๋ย (EC)</div>
+                            <div style="font-weight: bold;">1.7</div>
+                        </div>
+                        <div class="stat-card-app text-center">
+                            <i class="fas fa-tint"></i>
+                            <div style="font-size: 0.6rem; color: #888;">น้ำวันนี้</div>
+                            <div style="font-weight: bold;">125 L</div>
+                        </div>
+                        <div class="stat-card-app text-center">
+                            <i class="fas fa-thermometer-half"></i>
+                            <div style="font-size: 0.6rem; color: #888;">อุณหภูมิ</div>
+                            <div style="font-weight: bold;">32°C</div>
+                        </div>
+                    </div>
+
+                    <div class="px-4 pb-4">
+                        <div style="background: #f1f2f6; border-radius: 12px; padding: 4px; display: flex; margin-bottom: 15px;">
+                            <button id="mode-auto" onclick="setAppMode('AUTO')" class="flex-1 py-2 text-[0.7rem] font-bold rounded-lg transition-all" style="background: white; color: #4caf50;">AUTO</button>
+                            <button id="mode-manual" onclick="setAppMode('MANUAL')" class="flex-1 py-2 text-[0.7rem] font-bold rounded-lg transition-all" style="color: #888;">MANUAL</button>
+                        </div>
+
+                        <div style="font-size: 0.8rem; font-weight: bold; margin-bottom: 10px; color: #34495e; text-align: left;">Watering Zones</div>
+                        <div class="grid grid-cols-2 gap-3 mb-5 text-center">
+                            <button class="ctrl-btn-app" onclick="this.classList.toggle('active-blue')">
+                                <i class="fas fa-water text-center w-full"></i> โซนที่ 1
+                            </button>
+                            <button class="ctrl-btn-app" onclick="this.classList.toggle('active-blue')">
+                                <i class="fas fa-water text-center w-full"></i> โซนที่ 2
+                            </button>
+                            <button class="ctrl-btn-app" onclick="this.classList.toggle('active-blue')">
+                                <i class="fas fa-water text-center w-full"></i> โซนที่ 3
+                            </button>
+                            <button class="ctrl-btn-app" onclick="this.classList.toggle('active-green')">
+                                <i class="fas fa-vial text-center w-full"></i> ปุ๋ย A+B
+                            </button>
+                            <button class="ctrl-btn-app main-pump-btn-app text-center w-full" id="appPumpBtn" onclick="toggleAppPump()">
+                                <i class="fas fa-power-off text-center"></i> &nbsp; MAIN PUMP OFF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-left">
+                <span class="text-emerald-600 font-bold uppercase tracking-widest text-sm">Interactive UI Experience</span>
+                <h2 class="text-4xl font-bold text-slate-900 mt-4 mb-6">แอปพลิเคชันที่<br>ใครก็ใช้งานได้</h2>
+                <p class="text-lg text-slate-600 mb-8 leading-relaxed">
+                    เราออกแบบ UI ให้สวยงามและใช้งานง่าย (User-Friendly) โดยถอดแบบจากสถานะหน้าตู้ควบคุมจริง ทำให้เกษตรกรไม่ต้องเรียนรู้ใหม่ ข้อมูลอัปเดตแบบ Real-time และสามารถสั่งงานจำลองได้ทันทีในหน้าจอนี้
+                </p>
+                <div class="space-y-4">
+                    <div class="flex items-start gap-4 p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
+                        <i class="fa-solid fa-circle-check text-emerald-500 mt-1"></i>
+                        <p class="text-slate-700 text-left"><strong>Dashboard ครบจบ:</strong> ดูค่าความชื้น ปุ๋ย น้ำ และอุณหภูมิในหน้าเดียว</p>
+                    </div>
+                    <div class="flex items-start gap-4 p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
+                        <i class="fa-solid fa-circle-check text-emerald-500 mt-1"></i>
+                        <p class="text-slate-700 text-left"><strong>Simulated Control:</strong> ทดลองกดปุ่มเพื่อดูการตอบสนองของระบบ</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Visual Engineering Map -->
+    <section id="system-map" class="py-20 bg-slate-50 border-y border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-16">
+            <h2 class="text-4xl font-bold text-slate-900 mb-4 text-center w-full">โครงสร้างวิศวกรรมและงานติดตั้ง</h2>
+            <p class="text-lg text-slate-600 max-w-3xl mx-auto text-center w-full">มาตรฐานการเดินท่อแบบ Hybrid และผังการต่อวงจรไฟฟ้าที่ปลอดภัยและเป็นระบบ</p>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-8 text-left">
+            <!-- Hydraulic Diagram (Left) -->
+            <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-200 flex flex-col items-center">
+                <h4 class="font-bold text-slate-800 mb-6 flex items-center gap-2 text-center w-full justify-center">
+                    <i class="fa-solid fa-faucet-drip text-blue-500"></i> แผนผังการเดินท่อ (Hydraulic Diagram)
+                </h4>
+                <div class="img-container shadow-lg w-full">
+                    <img src="https://blogger.googleusercontent.com/img/a/AVvXsEiNiNWfdopxN62E35wenmMF7mErkAXI2q5dYKXZHYgd4Bu5vZlTCuXHvkSUhofJ_R1NyEmwkFrM3cNHUVFaZ5CwzIfyY7avdkCFpytkAHrlT9OSoFVt3vTEmOupQ2hXhoImH-QnErS1-nzsTvDIO5PZoDBQyN66V-sZsof_3EghFDNvJQU9WXKadwGxxv4"
+                        alt="Hydraulic Diagram" class="w-full h-auto rounded-xl">
+                </div>
+                <p class="text-[10px] text-slate-400 mt-4 uppercase font-bold tracking-widest text-center">Engineering Layout: PVC Main + PE Branches</p>
+            </div>
+
+            <!-- Wiring Diagram (Right) -->
+            <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-200 flex flex-col items-center">
+                <h4 class="font-bold text-slate-800 mb-6 flex items-center gap-2 text-center w-full justify-center">
+                    <i class="fa-solid fa-bolt text-amber-500"></i> ผังวงจรไฟฟ้า (Wiring Diagram)
+                </h4>
+                <div class="img-container shadow-lg w-full">
+                    <img src="https://blogger.googleusercontent.com/img/a/AVvXsEhlApqqNTUYQGpH68S4e2x5GzuFBZVEF_jKJiFVYRIZzHDG6XCd3Lnqc91v6Jz1Kq8kNIBSs9x7qbmHFeR1YsiexGhSqJhhNRsgByddTSxTqJJQb5-Yqd1maHyV5_-inZp73_n2Ih_UaaR5d-2_y0f0hgaUAqfnWRFztoY83CgdZPdjTblV6mzAyfVvqNQ"
+                        alt="Wiring Diagram" class="w-full h-auto rounded-xl">
+                </div>
+                <p class="text-[10px] text-slate-400 mt-4 uppercase font-bold tracking-widest text-center">Pin Assignment: ESP32 Smart Control System</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Budget Breakdown Section -->
+    <section id="budget-section" class="py-24 bg-white text-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-16">
+            <span class="text-emerald-600 font-bold uppercase tracking-widest text-sm text-center">Investment Summary</span>
+            <h2 class="text-4xl font-bold text-slate-900 mt-4 mb-4 text-center w-full">รายละเอียดงบประมาณโครงการ</h2>
+            <p class="text-lg text-slate-600 max-w-2xl mx-auto text-center w-full">งบประมาณรวมสุทธิ <strong>15,300.-</strong> บาทต่อชุด</p>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-16 text-left items-center">
+            <div class="space-y-4 text-left">
+                <div class="p-6 bg-slate-50 rounded-2xl border border-slate-200 flex justify-between items-center group hover:border-emerald-500 transition-all text-left">
+                    <div class="text-left">
+                        <h4 class="font-bold text-slate-800 text-left">1. ระบบสมองกลและหน้าตู้ (Core & UI)</h4>
+                        <p class="text-xs text-slate-500 text-left">ESP32, Relay, LCD, Switch, E-Stop, PSU, กล่อง IP65</p>
+                    </div>
+                    <span class="text-emerald-600 font-bold text-xl text-right">2,970.-</span>
+                </div>
+                <div class="p-6 bg-slate-50 rounded-2xl border border-slate-200 flex justify-between items-center group hover:border-emerald-500 transition-all text-left">
+                    <div class="text-left">
+                        <h4 class="font-bold text-slate-800 text-left">2. ชุดคอนเนคเตอร์และเก็บตก (Connectivity)</h4>
+                        <p class="text-xs text-slate-500 text-left">GX12 Plugs, DIN Rail, Terminals, Heat Shrink, VCT Cable</p>
+                    </div>
+                    <span class="text-emerald-600 font-bold text-xl text-right">1,725.-</span>
+                </div>
+                <div class="p-6 bg-white rounded-2xl border-2 border-emerald-500 flex justify-between items-center shadow-lg text-left">
+                    <div class="text-left">
+                        <h4 class="font-bold text-emerald-700 text-left">3. ระบบน้ำและเซนเซอร์ (Water & Sensors)</h4>
+                        <p class="text-xs text-slate-500 text-left">Pump 130W, Valves, Flow/Soil/EC Sensors, Dosing Pumps</p>
+                    </div>
+                    <span class="text-emerald-600 font-bold text-xl text-right">7,050.-</span>
+                </div>
+                <div class="p-6 bg-slate-50 rounded-2xl border border-slate-200 flex justify-between items-center group hover:border-emerald-500 transition-all text-left">
+                    <div class="text-left">
+                        <h4 class="font-bold text-slate-800 text-left">4. งานประปาและวัสดุสิ้นเปลือง</h4>
+                        <p class="text-xs text-slate-500 text-left">PVC/PE Pipes, Sprinklers, Filter, Gauge, Nut/Screw, Tape, Glue</p>
+                    </div>
+                    <span class="text-emerald-600 font-bold text-xl text-right">3,555.-</span>
+                </div>
+            </div>
+            <div class="bg-slate-900 rounded-[3rem] p-10 text-white flex flex-col justify-center text-center shadow-2xl relative overflow-hidden">
+                <div class="relative z-10 text-center">
+                    <div class="chart-container mb-8 text-center">
+                        <canvas id="budgetChart"></canvas>
+                    </div>
+                    <div class="text-slate-400 text-[10px] uppercase font-bold tracking-widest mb-2 text-center">Total Project Amount</div>
+                    <div class="text-6xl font-black text-emerald-400 text-center">15,300 <span class="text-xl font-bold text-white text-center">THB</span></div>
+                    <p class="mt-6 text-xs text-slate-400 leading-relaxed italic text-center">
+
+                    </p>
+                </div>
+                <div class="absolute -top-20 -left-20 w-80 h-80 bg-emerald-500/5 rounded-full blur-3xl text-center"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ROI Simulator Section -->
+    <section id="roi-simulator" class="py-24 bg-emerald-600 text-white text-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-16">
+            <h2 class="text-3xl md:text-5xl font-bold mb-4 text-center w-full text-white">คาดการณ์ผลกำไรจากการลงทุน</h2>
+            <p class="text-lg text-emerald-100 max-w-3xl mx-auto text-center w-full italic">อ้างอิงจากการลดค่าปุ๋ยและน้ำ 25% และลดชั่วโมงแรงงาน 90%</p>
+        </div>
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 bg-white/10 backdrop-blur-xl rounded-[3rem] p-10 border border-white/20 shadow-2xl text-center">
+            <div class="grid md:grid-cols-2 gap-12 items-center text-center">
+                <!-- Inputs -->
+                <div class="space-y-10 text-left">
+                    <div class="text-left">
+                        <label class="block text-emerald-50 text-sm font-bold mb-6 uppercase tracking-wider text-left">ค่าใช้จ่ายปุ๋ยและน้ำปัจจุบัน (บาท/เดือน)</label>
+                        <input type="range" id="inputFertWater" min="1000" max="20000" step="500" value="5000" oninput="updateROI()">
+                        <div class="flex justify-between mt-4 font-mono text-xl font-bold text-left">
+                            <span>1,000</span>
+                            <span class="bg-white text-emerald-600 px-4 py-1 rounded-xl shadow-lg" id="valFertWater">5,000</span>
+                            <span>20,000</span>
+                        </div>
+                    </div>
+                    <div class="text-left">
+                        <label class="block text-emerald-50 text-sm font-bold mb-6 uppercase tracking-wider text-left">ต้นทุนค่าแรงดูแลปัจจุบัน (บาท/เดือน)</label>
+                        <input type="range" id="inputLabor" min="3000" max="50000" step="500" value="15000" oninput="updateROI()">
+                        <div class="flex justify-between mt-4 font-mono text-xl font-bold text-left">
+                            <span>3,000</span>
+                            <span class="bg-white text-emerald-600 px-4 py-1 rounded-xl shadow-lg" id="valLabor">15,000</span>
+                            <span>50,000</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Results -->
+                <div class="bg-white rounded-[2.5rem] p-10 text-slate-800 shadow-2xl text-center space-y-8">
+                    <div class="text-center">
+                        <div class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2 text-center">ประหยัดเงินได้ (ต่อปี)</div>
+                        <div id="resYearlySaving" class="text-5xl font-black text-emerald-600 tracking-tight text-center">--</div>
+                    </div>
+                    <div class="h-px bg-slate-100 w-full text-center"></div>
+                    <div class="text-center">
+                        <div class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2 text-center">ระยะเวลาคืนทุน (Payback)</div>
+                        <div id="resPayback" class="text-4xl font-bold text-indigo-600 text-center">--</div>
+                        <div class="mt-4 text-[10px] font-bold bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full inline-block uppercase text-center">อ้างอิงงบลงทุน 15,300 ฿</div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-12 text-center text-emerald-100/60 text-xs leading-relaxed max-w-2xl mx-auto">
+                *การคำนวณเบื้องต้น: ประหยัดต้นทุนปุ๋ย/น้ำ (25%) + ประหยัดต้นทุนแรงงาน (90%) จากระบบอัตโนมัติที่ทำงานแม่นยำตลอด 24 ชม.
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-500 py-12 text-center">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col items-center text-center">
+            <i class="fa-solid fa-seedling text-emerald-500 text-4xl mb-6 text-center"></i>
+            <h3 class="text-white font-bold text-xl mb-2 text-center">Smart Fertigation Pro System</h3>
+            <p class="mb-8 text-center text-slate-400">นวัตกรรมระดับอุตสาหกรรม เพื่อเกษตรกรไทยยุค 5.0</p>
+            <p class="mb-8 text-center text-slate-400">ออกแบบและแก้ไขโดย ว่าที่ร.ต.กิตติศักดิ์ ชัยเชิดชู</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- 1. System Anatomy Logic (Modular Design) ---
+        const systemDetails = {
+            'brain': {
+                title: 'ESP32 Controller',
+                icon: 'fa-microchip',
+                color: 'text-emerald-400',
+                desc: 'หัวใจหลักของระบบที่ประมวลผล Logic PID และเชื่อมต่อแอปมือถือผ่าน WiFi รองรับการอัปเกรดฟีเจอร์ในอนาคต'
+            },
+            'soil': {
+                title: 'Capacitive Soil Sensor',
+                icon: 'fa-droplet',
+                color: 'text-amber-500',
+                desc: 'วัดความชื้นในดินแบบ Capacitive ไม่เกิดสนิมและแม่นยำสูง ช่วยให้ระบบตัดสินใจรดน้ำตามความต้องการจริงของพืช'
+            },
+            'ec': {
+                title: 'EC Sensor Kit',
+                icon: 'fa-bolt',
+                color: 'text-blue-500',
+                desc: 'วัดความเข้มข้นของปุ๋ยในน้ำแบบเรียลไทม์ เพื่อควบคุมการจ่ายปุ๋ย A และ B ให้คงที่ตามค่าที่ตั้งไว้'
+            },
+            'level': {
+                title: 'Float Switch Safety',
+                icon: 'fa-water',
+                color: 'text-rose-500',
+                desc: 'ระบบตัดไฟอัตโนมัติเมื่อน้ำในถังผสมหมด ป้องกันปั๊มน้ำไหม้ (Dry-run Protection) 100%'
+            },
+            'pump': {
+                title: 'Main DC Pump 130W',
+                icon: 'fa-fan',
+                color: 'text-emerald-600',
+                desc: 'ปั๊มแรงดันสูงเกรดพรีเมียม จ่ายน้ำได้สม่ำเสมอทั่วทั้งแปลง ทนทานและประหยัดไฟ'
+            },
+            'valve': {
+                title: '3-Zone Solenoid Valves',
+                icon: 'fa-faucet',
+                color: 'text-teal-600',
+                desc: 'วาล์วไฟฟ้าสำหรับแยกจ่ายน้ำ 3 พื้นที่อิสระ ช่วยรักษาแรงดันน้ำสปริงเกอร์ให้คงที่ทุกหัว'
+            },
+            'dosing': {
+                title: 'Fertilizer Dosing Pumps',
+                icon: 'fa-flask-vial',
+                color: 'text-purple-500',
+                desc: 'ปั๊มรีดท่อ (Peristaltic) 2 ตัว สำหรับดูดปุ๋ยแม่ปุ๋ย A และ B ลงถังผสมอย่างแม่นยำระดับมิลลิลิตร'
+            },
+            'connect': {
+                title: 'GX12 Aviation Connectors',
+                icon: 'fa-plug',
+                color: 'text-slate-500',
+                desc: 'มาตรฐานปลั๊ก Aviation กันน้ำ เสียบปุ๊บ ติดปั๊ม ใช้งานง่ายและดูเป็นมืออาชีพ ป้องกันการต่อสายผิด'
+            }
+        };
+
+        function showDetail(key) {
+            const data = systemDetails[key];
+            const container = document.getElementById('detail-content');
+            document.querySelectorAll('.system-node').forEach(el => el.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            container.classList.remove('fade-in');
+            void container.offsetWidth;
+            container.innerHTML = `
+                <div class="w-24 h-24 bg-white/10 rounded-3xl flex items-center justify-center mx-auto mb-8 ${data.color} text-5xl shadow-lg border border-white/5 text-center">
+                    <i class="fa-solid ${data.icon} text-center"></i>
+                </div>
+                <h3 class="text-3xl font-bold text-white mb-6 text-center">${data.title}</h3>
+                <p class="text-slate-400 text-lg leading-relaxed px-4 text-center">${data.desc}</p>
+            `;
+            container.classList.add('fade-in');
+        }
+
+        // --- 2. Mobile App Simulation Logic ---
+        function setAppMode(mode) {
+            const btnAuto = document.getElementById('mode-auto');
+            const btnManual = document.getElementById('mode-manual');
+            if (mode === 'AUTO') {
+                btnAuto.style.background = 'white';
+                btnAuto.style.color = '#4caf50';
+                btnManual.style.background = 'transparent';
+                btnManual.style.color = '#888';
+            } else {
+                btnManual.style.background = 'white';
+                btnManual.style.color = '#4caf50';
+                btnAuto.style.background = 'transparent';
+                btnAuto.style.color = '#888';
+            }
+        }
+
+        function toggleAppPump() {
+            const btn = document.getElementById('appPumpBtn');
+            btn.classList.toggle('running');
+            if (btn.classList.contains('running')) {
+                btn.innerHTML = '<i class="fas fa-sync fa-spin"></i> &nbsp; PUMP RUNNING...';
+            } else {
+                btn.innerHTML = '<i class="fas fa-power-off"></i> &nbsp; MAIN PUMP OFF';
+            }
+        }
+
+        // --- 3. ROI Simulator Logic ---
+        function updateROI() {
+            const fertWater = parseInt(document.getElementById('inputFertWater').value);
+            const labor = parseInt(document.getElementById('inputLabor').value);
+            const investment = 15300;
+
+            document.getElementById('valFertWater').innerText = fertWater.toLocaleString();
+            document.getElementById('valLabor').innerText = labor.toLocaleString();
+
+            // Savings Calculation: 25% of Fert/Water + 90% of Labor
+            const monthlySaving = (fertWater * 0.25) + (labor * 0.90);
+            const yearlySaving = monthlySaving * 12;
+            const paybackMonths = investment / monthlySaving;
+
+            document.getElementById('resYearlySaving').innerText = Math.round(yearlySaving).toLocaleString() + " ฿";
+            document.getElementById('resPayback').innerText = (paybackMonths < 1) ? "น้อยกว่า 1 เดือน" : paybackMonths.toFixed(1) + " เดือน";
+        }
+
+        // --- 4. Budget Chart ---
+        const ctx = document.getElementById('budgetChart').getContext('2d');
+        const budgetChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Core & UI', 'Connectivity', 'Water & Sensors', 'Plumbing'],
+                datasets: [{
+                    data: [2970, 1725, 7050, 3555],
+                    backgroundColor: ['#10b981', '#6366f1', '#3b82f6', '#f59e0b'],
+                    borderWidth: 0,
+                    hoverOffset: 15
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        padding: 15,
+                        bodyFont: {
+                            family: 'Sarabun',
+                            size: 14
+                        },
+                        callbacks: {
+                            label: (ctx) => ` ${ctx.label}: ${ctx.raw.toLocaleString()} บาท`
+                        }
+                    }
+                },
+                cutout: '75%'
+            }
+        });
+
+        function scrollToSection(id) {
+            const el = document.getElementById(id);
+            if (el) el.scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+
+        // Initialize ROI
+        window.onload = updateROI;
+    </script>
+</body>
+
+</html>
